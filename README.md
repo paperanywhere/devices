@@ -32,17 +32,36 @@ Stays in the firmware repo:
 - Panel controller IC choice (UC8179 / IT8951 / UC8159)
 - Per-controller quirks (`panel_data_inverted`, etc.)
 
+## Layout
+
+```
+src/
+├── lib.rs               types, CATALOG, lookup fns, re-exports
+└── vendors/
+    ├── mod.rs
+    ├── seeed.rs         reTerminal E1001 – E1004
+    ├── waveshare.rs     4.2" BW / 4.2" 3-color / 7.5" BW / 7.3" ACeP
+    └── soldered.rs      Inkplate 6 / 10
+```
+
+The crate root re-exports every named const so consumers stay vendor-
+agnostic at the import site — `use paperanywhere_devices::INKPLATE_10;`
+without reaching through `vendors::soldered`.
+
 ## Adding a new board
 
-1. Add a new `pub const` entry at the bottom of `src/lib.rs` with the next
-   available `id`. Never reuse retired ids — the value lands in NVS on
-   real devices.
-2. Append it to `CATALOG`.
-3. If it's an integrated board, follow up with a `boards/<slug>.rs` in
+1. Find the vendor module (`src/vendors/<vendor>.rs`) — or create a new
+   one and register it in `vendors/mod.rs` + add a re-export line in
+   `lib.rs`.
+2. Add a new `pub const` entry with the next available `id`. **Never
+   reuse retired ids** — the value lands in NVS on real devices.
+3. Append it to `CATALOG` in `lib.rs` (order matters: new entries go
+   at the end).
+4. If it's an integrated board, follow up with a `boards/<slug>.rs` in
    the firmware repo + a matching Cargo feature flag.
-4. Run `cargo test` — the test suite asserts uniqueness of ids/slugs,
+5. Run `cargo test` — the test suite asserts uniqueness of ids/slugs,
    that the default color mode is in the supported list, and that
-   integrated boards have a firmware target.
+   integrated boards declare a firmware target.
 
 ## License
 
