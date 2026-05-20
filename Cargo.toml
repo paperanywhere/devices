@@ -19,5 +19,5 @@ categories = ["embedded", "no-std", "data-structures"]
 # endpoint rather than embedding it at compile time. When proto's no_std
 # story is fixed, gate this on a `std` feature and re-export the types so
 # firmware can `include` the consts directly. Tracked separately.
-paperanywhere-proto = { git = "https://github.com/paperanywhere/proto" }
+paperanywhere-proto = { git = "https://github.com/paperanywhere/proto", branch = "main" }
 serde = { version = "1", features = ["derive"] }
