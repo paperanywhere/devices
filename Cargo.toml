@@ -1,0 +1,23 @@
+[package]
+name = "paperanywhere-devices"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/paperanywhere/devices"
+description = "Canonical board / panel catalog for paperanywhere — shared between backend (panel_models seed) and firmware (per-board metadata). no_std + alloc compatible."
+keywords = ["epaper", "esp32", "embedded", "no-std", "catalog"]
+categories = ["embedded", "no-std", "data-structures"]
+
+[dependencies]
+# `ColorMode` and `PackingKind` live in `paperanywhere-proto` because they
+# are wire-level types (the bytes the device receives). The devices catalog
+# composes them with per-board metadata.
+#
+# This crate is currently `std`-only: `paperanywhere-proto` pulls in `ulid`,
+# which has a known issue building with `serde` + no_std. The firmware
+# therefore consumes this catalog via the backend's `/api/panel_models`
+# endpoint rather than embedding it at compile time. When proto's no_std
+# story is fixed, gate this on a `std` feature and re-export the types so
+# firmware can `include` the consts directly. Tracked separately.
+paperanywhere-proto = { git = "https://github.com/paperanywhere/proto" }
+serde = { version = "1", features = ["derive"] }
